@@ -1,6 +1,10 @@
 import type { ConversionResult } from './types';
 import type { SourceFormat, TargetFormat } from '../constants';
-import { HEIC_TARGETS, MIME_BY_EXT } from '../constants';
+import {
+  TARGETS_SUPPORTED_IN_BROWSER,
+  TARGETS_UNSUPPORTED,
+  MIME_BY_EXT,
+} from '../constants';
 import { convertHeic } from './heic';
 import { convertWithCanvas } from './canvas';
 
@@ -22,12 +26,10 @@ export function isConversionSupported(
   targetFormat: TargetFormat,
   file: File
 ): boolean {
+  if (TARGETS_UNSUPPORTED.includes(targetFormat)) return false;
   const detected = getDetectedFormat(file);
   if (detected === null) return false;
-  if (detected === 'HEIC') {
-    return HEIC_TARGETS.includes(targetFormat);
-  }
-  return ['PNG', 'JPEG', 'WebP'].includes(targetFormat);
+  return TARGETS_SUPPORTED_IN_BROWSER.includes(targetFormat);
 }
 
 export async function convertFile(
@@ -36,14 +38,16 @@ export async function convertFile(
   targetFormat: TargetFormat,
   quality: number
 ): Promise<ConversionResult> {
+  if (TARGETS_UNSUPPORTED.includes(targetFormat)) {
+    throw new Error(
+      'Encoding to HEIC/HEIF is not supported in the browser. Use PNG or JPEG for best compatibility.'
+    );
+  }
   const detected = getDetectedFormat(file);
   if (detected === null) {
     throw new Error('Unsupported file type');
   }
   if (detected === 'HEIC') {
-    if (!HEIC_TARGETS.includes(targetFormat)) {
-      throw new Error('HEIC can only be converted to PNG or JPEG');
-    }
     return convertHeic(file, targetFormat, quality);
   }
   return convertWithCanvas(file, targetFormat, quality);

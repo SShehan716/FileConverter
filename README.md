@@ -4,7 +4,7 @@ A browser-based file converter that runs entirely on your device. Convert betwee
 
 ## Features
 
-- **Format selection**: Choose source format (Auto, HEIC, JPEG, PNG, WebP, GIF, BMP) and target format (PNG, JPEG, WebP). HEIC/HEIF convert to PNG or JPEG.
+- **Format selection**: Choose source format (Auto, HEIC, JPEG, PNG, WebP, GIF, BMP) and target format (JPEG, PNG, WebP, GIF, BMP). HEIC/HEIF encoding is not supported in the browser (options shown but disabled).
 - **Drag and drop** or click to select files; paste from clipboard (e.g. screenshots).
 - **File list** with thumbnails, size, and status (pending / converting / done / error). Remove single file or clear all.
 - **Quality slider** for JPEG and WebP output (0.1–1.0).
@@ -14,10 +14,17 @@ A browser-based file converter that runs entirely on your device. Convert betwee
 
 ## Supported conversions
 
-| Source        | Target   |
-|---------------|----------|
-| HEIC, HEIF    | PNG, JPEG |
-| JPEG, PNG, WebP, GIF, BMP | PNG, JPEG, WebP |
+Any supported image (HEIC, HEIF, JPEG, PNG, WebP, GIF, BMP) can be converted to:
+
+| Target   | Supported in browser |
+|----------|------------------------|
+| JPEG     | Yes                    |
+| PNG      | Yes                    |
+| WebP     | Yes                    |
+| GIF      | Yes (single-frame)     |
+| BMP      | Yes                    |
+| HEIC     | No (option disabled)   |
+| HEIF     | No (option disabled)   |
 
 ## Run locally
 
@@ -40,8 +47,11 @@ Output is in `dist/`.
 ## Tech stack
 
 - React 18 + TypeScript + Vite
-- [heic-convert](https://www.npmjs.com/package/heic-convert) (browser build) for HEIC → PNG/JPEG
-- Canvas API for other image format conversions
+- [heic-convert](https://www.npmjs.com/package/heic-convert) (browser) for HEIC → PNG/JPEG
+- [heic-decode](https://www.npmjs.com/package/heic-decode) for HEIC → WebP/GIF/BMP
+- Canvas API for PNG/JPEG/WebP and as base for GIF/BMP
+- [gifenc](https://www.npmjs.com/package/gifenc) for GIF encoding
+- Custom 24-bit BMP encoder (no Node Buffer)
 - JSZip for “Download all as ZIP”
 
 Limits: max 20 files per batch, 50 MB per file (configurable in `src/lib/constants.ts`).

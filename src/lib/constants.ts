@@ -9,16 +9,29 @@ export const SOURCE_FORMATS = [
 ] as const;
 
 export const TARGET_FORMATS = [
-  { value: 'PNG', label: 'PNG' },
   { value: 'JPEG', label: 'JPEG' },
+  { value: 'PNG', label: 'PNG' },
   { value: 'WebP', label: 'WebP' },
+  { value: 'GIF', label: 'GIF' },
+  { value: 'BMP', label: 'BMP' },
+  { value: 'HEIC', label: 'HEIC' },
+  { value: 'HEIF', label: 'HEIF' },
 ] as const;
 
 export type SourceFormat = (typeof SOURCE_FORMATS)[number]['value'];
 export type TargetFormat = (typeof TARGET_FORMATS)[number]['value'];
 
-/** For HEIC source, only PNG and JPEG are valid targets */
-export const HEIC_TARGETS: TargetFormat[] = ['PNG', 'JPEG'];
+/** Targets we can encode in the browser */
+export const TARGETS_SUPPORTED_IN_BROWSER: TargetFormat[] = [
+  'JPEG',
+  'PNG',
+  'WebP',
+  'GIF',
+  'BMP',
+];
+
+/** Targets with no browser encoder (show in UI but disabled) */
+export const TARGETS_UNSUPPORTED: TargetFormat[] = ['HEIC', 'HEIF'];
 
 export const MIME_BY_EXT: Record<string, string> = {
   heic: 'image/heic',
@@ -42,15 +55,23 @@ export const EXT_BY_MIME: Record<string, string> = {
 };
 
 export const MIME_FOR_TARGET: Record<TargetFormat, string> = {
-  PNG: 'image/png',
   JPEG: 'image/jpeg',
+  PNG: 'image/png',
   WebP: 'image/webp',
+  GIF: 'image/gif',
+  BMP: 'image/bmp',
+  HEIC: 'image/heic',
+  HEIF: 'image/heif',
 };
 
 export const EXT_FOR_TARGET: Record<TargetFormat, string> = {
-  PNG: 'png',
   JPEG: 'jpg',
+  PNG: 'png',
   WebP: 'webp',
+  GIF: 'gif',
+  BMP: 'bmp',
+  HEIC: 'heic',
+  HEIF: 'heif',
 };
 
 export const ACCEPT_IMAGE = [

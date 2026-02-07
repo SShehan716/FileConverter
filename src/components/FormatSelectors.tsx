@@ -2,7 +2,7 @@ import type { SourceFormat, TargetFormat } from '../lib/constants';
 import {
   SOURCE_FORMATS,
   TARGET_FORMATS,
-  HEIC_TARGETS,
+  TARGETS_UNSUPPORTED,
 } from '../lib/constants';
 
 interface FormatSelectorsProps {
@@ -18,8 +18,6 @@ export default function FormatSelectors({
   onSourceChange,
   onTargetChange,
 }: FormatSelectorsProps) {
-  const targetOptions = sourceFormat === 'HEIC' ? HEIC_TARGETS : TARGET_FORMATS.map((t) => t.value);
-
   return (
     <section className="format-selectors" aria-label="Conversion format">
       <div className="selector-row">
@@ -43,16 +41,21 @@ export default function FormatSelectors({
           value={targetFormat}
           onChange={(e) => onTargetChange(e.target.value as TargetFormat)}
         >
-          {TARGET_FORMATS.filter((t) => targetOptions.includes(t.value)).map(({ value, label }) => (
-            <option key={value} value={value}>
+          {TARGET_FORMATS.map(({ value, label }) => (
+            <option
+              key={value}
+              value={value}
+              disabled={TARGETS_UNSUPPORTED.includes(value)}
+              title={TARGETS_UNSUPPORTED.includes(value) ? 'Encoding to HEIC/HEIF is not supported in the browser.' : undefined}
+            >
               {label}
             </option>
           ))}
         </select>
       </div>
-      {sourceFormat === 'HEIC' && (
-        <p className="heic-hint">HEIC / HEIF can be converted to PNG or JPEG.</p>
-      )}
+      <p className="heic-hint">
+        Convert to any supported format. HEIC/HEIF encoding is not available in the browser.
+      </p>
     </section>
   );
 }
